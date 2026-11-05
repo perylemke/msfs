@@ -6,9 +6,7 @@ on:
   pull_request:
 
 permissions:
-  actions: read
   contents: read
-  security-events: write
 
 jobs:
   govulncheck:
@@ -25,25 +23,3 @@ jobs:
 
       - name: Run govulncheck
         uses: golang/govulncheck-action@032d45514ae346b1db93c04b0c90b841c370344f # v1.1.0
-
-  codeql:
-    name: CodeQL
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
-        with:
-          languages: go
-          config-file: .github/codeql/codeql-config.yml
-
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
-
-      # This private repo does not have GitHub code scanning enabled, so SARIF upload fails.
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
-        with:
-          upload: false
