@@ -1,0 +1,19 @@
+# PDF example from take-home
+mkdir school
+cd school
+pwd
+mkdir homework
+cd homework
+mkdir math
+mkdir lunch
+mkdir history
+mkdir spanish
+rmdir lunch
+ls
+pwd
+cd ..
+mkdir cheatsheet
+ls
+rmdir cheatsheet
+cd ..
+pwd
