@@ -113,3 +113,63 @@ func TestMainHelpFlag(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, strings.Contains(buf.String(), "mkdir-p"))
 }
+
+func TestRunREPLReadsStdin(t *testing.T) {
+	inR, inW, err := os.Pipe()
+	require.NoError(t, err)
+	oldIn := os.Stdin
+	os.Stdin = inR
+	t.Cleanup(func() {
+		os.Stdin = oldIn
+		inR.Close()
+	})
+
+	oldOut := os.Stdout
+	outR, outW, err := os.Pipe()
+	require.NoError(t, err)
+	os.Stdout = outW
+	t.Cleanup(func() { os.Stdout = oldOut })
+
+	_, err = inW.WriteString("pwd\n")
+	require.NoError(t, err)
+	require.NoError(t, inW.Close())
+
+	require.Equal(t, 0, runREPL(nil))
+	require.NoError(t, outW.Close())
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, outR)
+	require.NoError(t, err)
+	require.Contains(t, buf.String(), "/")
+}
+
+func TestRunREPLScannerError(t *testing.T) {
+	dir, err := os.Open(".")
+	require.NoError(t, err)
+	oldIn := os.Stdin
+	os.Stdin = dir
+	t.Cleanup(func() {
+		os.Stdin = oldIn
+		dir.Close()
+	})
+
+	oldOut := os.Stdout
+	os.Stdout, err = os.OpenFile(os.DevNull, os.O_WRONLY, 0)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		os.Stdout.Close()
+		os.Stdout = oldOut
+	})
+
+	oldErr := os.Stderr
+	errR, errW, err := os.Pipe()
+	require.NoError(t, err)
+	os.Stderr = errW
+	t.Cleanup(func() { os.Stderr = oldErr })
+
+	require.Equal(t, 1, runREPL(nil))
+	require.NoError(t, errW.Close())
+	var buf bytes.Buffer
+	_, err = io.Copy(&buf, errR)
+	require.NoError(t, err)
+	require.Contains(t, buf.String(), "error:")
+}

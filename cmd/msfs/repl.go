@@ -30,6 +30,10 @@ func runREPL(args []string) int {
 			fmt.Fprintln(os.Stderr, "error:", err)
 		}
 	}
+	if err := sc.Err(); err != nil {
+		fmt.Fprintln(os.Stderr, "error:", err)
+		return 1
+	}
 	return 0
 }
 
