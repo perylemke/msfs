@@ -36,7 +36,7 @@ func TestExecLineCommands(t *testing.T) {
 func TestRunScriptFile(t *testing.T) {
 	dir := t.TempDir()
 	script := filepath.Join(dir, "script.txt")
-	require.NoError(t, os.WriteFile(script, []byte("pwd\nmkdir x\nls\n"), 0o644))
+	require.NoError(t, os.WriteFile(script, []byte("pwd\nmkdir x\nls\n"), 0o600))
 	s := fs.NewSession(fs.New())
 	require.Equal(t, 0, runScript(s, script))
 	list, err := s.List()

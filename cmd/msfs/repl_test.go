@@ -33,7 +33,9 @@ func TestPrintCommandHelpMkdir(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 	os.Stdout = w
-	require.True(t, printCommandHelp("mkdir"))
+	ok, err := printCommandHelp("mkdir")
+	require.NoError(t, err)
+	require.True(t, ok)
 	require.NoError(t, w.Close())
 	os.Stdout = old
 	var buf bytes.Buffer
@@ -105,7 +107,7 @@ func TestMainHelpFlag(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 	os.Stdout = w
-	printHelp()
+	require.NoError(t, printHelp())
 	require.NoError(t, w.Close())
 	os.Stdout = old
 	var buf bytes.Buffer
@@ -121,7 +123,7 @@ func TestRunREPLReadsStdin(t *testing.T) {
 	os.Stdin = inR
 	t.Cleanup(func() {
 		os.Stdin = oldIn
-		inR.Close()
+		require.NoError(t, inR.Close())
 	})
 
 	oldOut := os.Stdout
@@ -149,14 +151,14 @@ func TestRunREPLScannerError(t *testing.T) {
 	os.Stdin = dir
 	t.Cleanup(func() {
 		os.Stdin = oldIn
-		dir.Close()
+		require.NoError(t, dir.Close())
 	})
 
 	oldOut := os.Stdout
 	os.Stdout, err = os.OpenFile(os.DevNull, os.O_WRONLY, 0)
 	require.NoError(t, err)
 	t.Cleanup(func() {
-		os.Stdout.Close()
+		require.NoError(t, os.Stdout.Close())
 		os.Stdout = oldOut
 	})
 

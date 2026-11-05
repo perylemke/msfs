@@ -14,7 +14,7 @@ func TestWalkSkipDir(t *testing.T) {
 	var seen []string
 	err := s.Walk(func(p string, n *fs.WalkNode) error {
 		if n.Kind == fs.WalkDirectory && p == "/a/skip" {
-			return fs.SkipDir
+			return fs.ErrSkipDir
 		}
 		seen = append(seen, p)
 		return nil

@@ -7,6 +7,7 @@ import (
 	"sort"
 )
 
+//nolint:gosec // G101: "pwd" is a command name, not a credential
 var commandHelp = map[string]string{
 	"pwd": `usage: pwd
 Print the absolute path of the current working directory.`,
@@ -65,16 +66,16 @@ func argsHaveHelpFlag(args []string) bool {
 	return false
 }
 
-func printCommandHelp(name string) bool {
+func printCommandHelp(name string) (bool, error) {
 	text, ok := commandHelp[name]
 	if !ok {
-		return false
+		return false, nil
 	}
-	io.WriteString(os.Stdout, text+"\n")
-	return true
+	_, err := io.WriteString(os.Stdout, text+"\n")
+	return true, err
 }
 
-func printHelp() {
+func printHelp() error {
 	names := make([]string, 0, len(commandHelp))
 	seen := make(map[string]struct{})
 	for name := range commandHelp {
@@ -88,29 +89,41 @@ func printHelp() {
 		names = append(names, name)
 	}
 	sort.Strings(names)
-	io.WriteString(os.Stdout, "msfs commands (use <command> --help for details):\n")
-	for _, name := range names {
-		fmt.Fprintf(os.Stdout, "  %s\n", name)
+	if _, err := io.WriteString(os.Stdout, "msfs commands (use <command> --help for details):\n"); err != nil {
+		return err
 	}
-	io.WriteString(os.Stdout, "\nAliases: mkdirall (same as mkdir-p)\n")
+	for _, name := range names {
+		if _, err := fmt.Fprintf(os.Stdout, "  %s\n", name); err != nil {
+			return err
+		}
+	}
+	_, err := io.WriteString(os.Stdout, "\nAliases: mkdirall (same as mkdir-p)\n")
+	return err
 }
 
 func handleHelpRequest(cmd string, fields []string) (handled bool, err error) {
 	if cmd == "help" {
 		if len(fields) >= 2 && !isHelpFlag(fields[1]) {
-			if !printCommandHelp(fields[1]) {
+			ok, err := printCommandHelp(fields[1])
+			if err != nil {
+				return true, err
+			}
+			if !ok {
 				return true, fmt.Errorf("unknown command: %s", fields[1])
 			}
 			return true, nil
 		}
-		printHelp()
-		return true, nil
+		return true, printHelp()
 	}
 	if len(fields) > 1 && argsHaveHelpFlag(fields[1:]) {
-		if printCommandHelp(cmd) {
-			return true, nil
+		ok, err := printCommandHelp(cmd)
+		if err != nil {
+			return true, err
 		}
-		return true, fmt.Errorf("unknown command: %s", cmd)
+		if !ok {
+			return true, fmt.Errorf("unknown command: %s", cmd)
+		}
+		return true, nil
 	}
 	return false, nil
 }

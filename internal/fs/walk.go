@@ -5,8 +5,8 @@ import (
 	"path"
 )
 
-// SkipDir skips descending into a directory during Walk.
-var SkipDir = errors.New("skip directory")
+// ErrSkipDir skips descending into a directory during Walk.
+var ErrSkipDir = errors.New("skip directory")
 
 // WalkNode exposes entry metadata to walk callbacks.
 type WalkNode struct {
@@ -72,7 +72,7 @@ func (s *Session) walkDir(abs string, dir *inode, fn WalkFunc) error {
 			kind = WalkSymlink
 		}
 		if err := fn(resolved, &WalkNode{Kind: kind}); err != nil {
-			if errors.Is(err, SkipDir) && n.kind == kindDirectory {
+			if errors.Is(err, ErrSkipDir) && n.kind == kindDirectory {
 				continue
 			}
 			return err
