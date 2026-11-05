@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"os"
 	"strings"
 
@@ -60,9 +59,10 @@ func execLine(s *fs.Session, line string) error {
 		return nil
 	}
 	cmd := fields[0]
+	if handled, err := handleHelpRequest(cmd, fields); handled {
+		return err
+	}
 	switch cmd {
-	case "help":
-		printHelp()
 	case "pwd":
 		p, err := s.Pwd()
 		if err != nil {
@@ -179,11 +179,6 @@ func execLine(s *fs.Session, line string) error {
 		return fmt.Errorf("unknown command: %s", cmd)
 	}
 	return nil
-}
-
-func printHelp() {
-	io.WriteString(os.Stdout, `commands: pwd cd mkdir mkdir-p ls rmdir touch write cat mv cp find findre ln ln-s chmod su user
-`)
 }
 
 func splitFields(line string) []string {

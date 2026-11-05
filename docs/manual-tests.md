@@ -4,6 +4,8 @@ Run commands via `go run ./cmd/msfs` (REPL) or place lines in a file and use `go
 
 Expected errors are shown as `error: ...` on stderr.
 
+Use `<command> --help` (or `help <command>`) to see usage; help does not modify the filesystem.
+
 ## PDF happy path
 
 | Step | Command | Expected stdout |
