@@ -1,5 +1,7 @@
 package fs
 
+import "errors"
+
 // EventKind describes a filesystem mutation.
 type EventKind int
 
@@ -42,6 +44,9 @@ func (f *FS) runBefore(kind EventKind, path string) error {
 	f.mu.RUnlock()
 	for _, h := range hooks {
 		if err := h(kind, path); err != nil {
+			if errors.Is(err, ErrCanceled) {
+				return err
+			}
 			return err
 		}
 	}

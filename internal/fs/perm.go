@@ -20,5 +20,5 @@ func (f *FS) userCan(user string, n *inode, want permMode) bool {
 			return n.mode&want == want
 		}
 	}
-	return n.mode&want == want
+	return false
 }

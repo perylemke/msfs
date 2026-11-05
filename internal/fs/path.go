@@ -9,6 +9,10 @@ func (f *FS) resolveAbs(abs string, followFinal bool) (*resolved, error) {
 }
 
 func (f *FS) resolveAbsLocked(abs string, followFinal bool) (*resolved, error) {
+	return f.resolveAbsLockedSeen(abs, followFinal, make(map[inodeID]struct{}))
+}
+
+func (f *FS) resolveAbsLockedSeen(abs string, followFinal bool, seen map[inodeID]struct{}) (*resolved, error) {
 	cur := f.root()
 	curPath := "/"
 	parts := splitAbs(abs)
@@ -26,7 +30,7 @@ func (f *FS) resolveAbsLocked(abs string, followFinal bool) (*resolved, error) {
 		if isLast && !followFinal && next.kind == kindSymlink {
 			return &resolved{inode: next, abs: path.Join(curPath, part)}, nil
 		}
-		next, linkPath, err := f.followLinksLocked(next, path.Join(curPath, part))
+		next, linkPath, err := f.followLinksLockedSeen(next, path.Join(curPath, part), seen)
 		if err != nil {
 			return nil, err
 		}
@@ -43,7 +47,10 @@ func (f *FS) followLinks(n *inode, linkAbs string) (*inode, string, error) {
 }
 
 func (f *FS) followLinksLocked(n *inode, linkAbs string) (*inode, string, error) {
-	seen := make(map[inodeID]struct{})
+	return f.followLinksLockedSeen(n, linkAbs, make(map[inodeID]struct{}))
+}
+
+func (f *FS) followLinksLockedSeen(n *inode, linkAbs string, seen map[inodeID]struct{}) (*inode, string, error) {
 	for n.kind == kindSymlink {
 		if _, ok := seen[n.id]; ok {
 			return nil, "", ErrSymlinkLoop
@@ -53,7 +60,7 @@ func (f *FS) followLinksLocked(n *inode, linkAbs string) (*inode, string, error)
 		if target == "" {
 			return nil, "", ErrNotFound
 		}
-		res, err := f.resolveAbsLocked(absPath("/", target), true)
+		res, err := f.resolveAbsLockedSeen(absPath("/", target), true, seen)
 		if err != nil {
 			return nil, "", err
 		}

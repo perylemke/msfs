@@ -101,6 +101,11 @@ func (s *Session) MoveFile(from, to string) error {
 	if err := validateName(to); err != nil {
 		return err
 	}
+	fromPath := path.Join(s.cwd, from)
+	toPath := path.Join(s.cwd, to)
+	if err := s.fs.runBefore(EventRename, fromPath); err != nil {
+		return err
+	}
 	s.fs.mu.Lock()
 	dir, err := s.fs.resolveAbsLocked(s.cwd, true)
 	if err != nil {
@@ -120,12 +125,6 @@ func (s *Session) MoveFile(from, to string) error {
 	if _, ok := dir.inode.entries[to]; ok {
 		s.fs.mu.Unlock()
 		return ErrAlreadyExists
-	}
-	fromPath := path.Join(s.cwd, from)
-	toPath := path.Join(s.cwd, to)
-	if err := s.fs.runBefore(EventRename, fromPath); err != nil {
-		s.fs.mu.Unlock()
-		return err
 	}
 	dir.inode.entries[to] = id
 	delete(dir.inode.entries, from)

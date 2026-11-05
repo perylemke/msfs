@@ -8,7 +8,6 @@ import (
 )
 
 func TestNewSessionPwdRoot(t *testing.T) {
-	t.Parallel()
 	s := fs.NewSession(fs.New())
 	got, err := s.Pwd()
 	require.NoError(t, err)

@@ -8,7 +8,6 @@ import (
 )
 
 func TestFileOperations(t *testing.T) {
-	t.Parallel()
 	s := fs.NewSession(fs.New())
 	require.NoError(t, s.CreateFile("notes.txt"))
 	require.NoError(t, s.WriteFile("notes.txt", "hello"))
@@ -24,7 +23,6 @@ func TestFileOperations(t *testing.T) {
 }
 
 func TestFindExactName(t *testing.T) {
-	t.Parallel()
 	s := fs.NewSession(fs.New())
 	require.NoError(t, s.Mkdir("a"))
 	require.NoError(t, s.Cd("a"))
@@ -39,17 +37,14 @@ func TestFindExactName(t *testing.T) {
 }
 
 func TestFileErrors(t *testing.T) {
-	t.Parallel()
 
 	t.Run("read missing", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		_, err := s.ReadFile("x")
 		require.ErrorIs(t, err, fs.ErrNotFound)
 	})
 
 	t.Run("read directory", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Mkdir("d"))
 		_, err := s.ReadFile("d")
@@ -57,7 +52,6 @@ func TestFileErrors(t *testing.T) {
 	})
 
 	t.Run("write directory", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Mkdir("d"))
 		err := s.WriteFile("d", "nope")
@@ -65,7 +59,6 @@ func TestFileErrors(t *testing.T) {
 	})
 
 	t.Run("move dest exists", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.CreateFile("a"))
 		require.NoError(t, s.CreateFile("b"))
@@ -74,7 +67,6 @@ func TestFileErrors(t *testing.T) {
 	})
 
 	t.Run("rmdir on file", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.CreateFile("f"))
 		err := s.Rmdir("f")

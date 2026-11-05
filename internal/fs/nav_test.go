@@ -8,7 +8,6 @@ import (
 )
 
 func TestPDFNavigationScript(t *testing.T) {
-	t.Parallel()
 	s := fs.NewSession(fs.New())
 
 	require.NoError(t, s.Mkdir("school"))
@@ -47,17 +46,13 @@ func TestPDFNavigationScript(t *testing.T) {
 }
 
 func TestNavigationErrors(t *testing.T) {
-	t.Parallel()
-
 	t.Run("cd missing", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		err := s.Cd("nope")
 		require.ErrorIs(t, err, fs.ErrNotFound)
 	})
 
 	t.Run("mkdir duplicate", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Mkdir("a"))
 		err := s.Mkdir("a")
@@ -65,14 +60,12 @@ func TestNavigationErrors(t *testing.T) {
 	})
 
 	t.Run("invalid name", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		err := s.Mkdir("bad/name")
 		require.ErrorIs(t, err, fs.ErrInvalidName)
 	})
 
 	t.Run("rmdir not empty", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Mkdir("d"))
 		require.NoError(t, s.Cd("d"))
@@ -83,7 +76,6 @@ func TestNavigationErrors(t *testing.T) {
 	})
 
 	t.Run("rmdir not child of cwd", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Mkdir("a"))
 		require.NoError(t, s.Mkdir("b"))
@@ -93,7 +85,6 @@ func TestNavigationErrors(t *testing.T) {
 	})
 
 	t.Run("cd parent at root", func(t *testing.T) {
-		t.Parallel()
 		s := fs.NewSession(fs.New())
 		require.NoError(t, s.Cd(".."))
 		pwd, err := s.Pwd()
