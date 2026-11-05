@@ -22,6 +22,8 @@ Create a directory and any missing parent directories. Path may be absolute or r
 List names of children in the current working directory (creation order).`,
 	"rmdir": `usage: rmdir <name>
 Remove an empty directory that is a direct child of the current working directory.`,
+	"rm": `usage: rm [-r] <path>...
+Remove files. With -r, also remove directories and their contents.`,
 	"touch": `usage: touch <path>
 Create an empty file at the given path (absolute or relative).`,
 	"write": `usage: write <path> <content>

@@ -40,6 +40,20 @@ Script: [scripts/pdf-happy-path.txt](scripts/pdf-happy-path.txt)
 
 If one name already exists, the others are still created and the command reports `already exists`.
 
+## rm
+
+| Step | Command | Expected |
+|------|---------|----------|
+| 1 | `touch a` | (empty) |
+| 2 | `ls` | `a` |
+| 3 | `rm a` | (empty) |
+| 4 | `ls` | (empty) |
+| 5 | `mkdir d` | (empty) |
+| 6 | `rm d` | error: is a directory |
+| 7 | `mkdir-p /tree/sub`, `touch /tree/sub/f` | (empty) |
+| 8 | `rm -r /tree` | (empty) |
+| 9 | `ls` | (empty) |
+
 ## Core error cases
 
 | Scenario | Commands | Expected error |

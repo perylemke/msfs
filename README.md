@@ -54,6 +54,8 @@ In the REPL, `<command> --help` (or `-h`) prints usage without changing the file
 
 `mkdir` accepts multiple directory names in one command (like GNU mkdir), for example `mkdir pasta1 pasta2 pasta3`.
 
+Use `rm` to delete files (`rm file`) or trees with `rm -r dir`. Empty directories can still be removed with `rmdir`.
+
 ## Manual test scenarios
 
 See [docs/manual-tests.md](docs/manual-tests.md) for step-by-step happy paths and error cases matching the PDF and extensions.

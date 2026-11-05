@@ -309,12 +309,43 @@ func (s *Session) unlinkAbs(abs string) error {
 	n := s.fs.inodes[id]
 	delete(parent.inode.entries, name)
 	parent.inode.order = removeName(parent.inode.order, name)
-	if n.kind != kindDirectory {
-		delete(s.fs.inodes, n.id)
-	} else if len(n.entries) == 0 {
+	if s.fs.inodeRefCountLocked(n.id) == 0 {
 		delete(s.fs.inodes, n.id)
 	}
 	s.fs.mu.Unlock()
+	return nil
+}
+
+// Remove deletes a file or symlink at path. Directories return ErrIsDirectory.
+func (s *Session) Remove(p string) error {
+	abs := absPath(s.cwd, p)
+	if err := s.fs.runBefore(EventRemove, abs); err != nil {
+		return err
+	}
+	res, err := s.fs.resolveAbs(abs, true)
+	if err != nil {
+		return err
+	}
+	if res.inode.kind == kindDirectory {
+		return ErrIsDirectory
+	}
+	if err := s.unlinkAbs(abs); err != nil {
+		return err
+	}
+	s.fs.runAfter(Event{Kind: EventRemove, Path: abs})
+	return nil
+}
+
+// RemoveAll deletes a file, symlink, or directory tree at path.
+func (s *Session) RemoveAll(p string) error {
+	abs := absPath(s.cwd, p)
+	if err := s.fs.runBefore(EventRemove, abs); err != nil {
+		return err
+	}
+	if err := s.removePath(abs); err != nil {
+		return err
+	}
+	s.fs.runAfter(Event{Kind: EventRemove, Path: abs})
 	return nil
 }
 

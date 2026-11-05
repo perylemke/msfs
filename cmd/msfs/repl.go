@@ -103,6 +103,35 @@ func execLine(s *fs.Session, line string) error {
 			return fmt.Errorf("usage: rmdir <name>")
 		}
 		return s.Rmdir(fields[1])
+	case "rm":
+		if len(fields) < 2 {
+			return fmt.Errorf("usage: rm [-r] <path>...")
+		}
+		recursive := false
+		var paths []string
+		for _, arg := range fields[1:] {
+			if arg == "-r" {
+				recursive = true
+				continue
+			}
+			paths = append(paths, arg)
+		}
+		if len(paths) == 0 {
+			return fmt.Errorf("usage: rm [-r] <path>...")
+		}
+		var firstErr error
+		for _, p := range paths {
+			var err error
+			if recursive {
+				err = s.RemoveAll(p)
+			} else {
+				err = s.Remove(p)
+			}
+			if err != nil && firstErr == nil {
+				firstErr = err
+			}
+		}
+		return firstErr
 	case "touch":
 		if len(fields) < 2 {
 			return fmt.Errorf("usage: touch <path>")

@@ -50,3 +50,18 @@ func (f *FS) newInode(kind inodeKind) *inode {
 func (f *FS) root() *inode {
 	return f.inodes[1]
 }
+
+func (f *FS) inodeRefCountLocked(id inodeID) int {
+	count := 0
+	for _, dir := range f.inodes {
+		if dir.kind != kindDirectory {
+			continue
+		}
+		for _, ref := range dir.entries {
+			if ref == id {
+				count++
+			}
+		}
+	}
+	return count
+}

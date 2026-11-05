@@ -62,6 +62,44 @@ func TestMkdirMultipleContinuesAfterError(t *testing.T) {
 	require.Equal(t, []string{"pasta2", "pasta1", "pasta3"}, list)
 }
 
+func TestRmRemovesFile(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, execLine(s, "touch a"))
+	require.NoError(t, execLine(s, "rm a"))
+	list, err := s.List()
+	require.NoError(t, err)
+	require.Empty(t, list)
+}
+
+func TestRmDirectoryWithoutRecursive(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, s.Mkdir("d"))
+	err := execLine(s, "rm d")
+	require.ErrorIs(t, err, fs.ErrIsDirectory)
+	list, err := s.List()
+	require.NoError(t, err)
+	require.Equal(t, []string{"d"}, list)
+}
+
+func TestRmRecursive(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, s.MkdirAll("/d/sub"))
+	require.NoError(t, s.CreateFileAt("/d/sub/f"))
+	require.NoError(t, execLine(s, "rm -r /d"))
+	list, err := s.List()
+	require.NoError(t, err)
+	require.Empty(t, list)
+}
+
+func TestRmHelpDoesNotRemove(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, s.CreateFile("f"))
+	require.NoError(t, execLine(s, "rm --help"))
+	list, err := s.List()
+	require.NoError(t, err)
+	require.Equal(t, []string{"f"}, list)
+}
+
 func TestMainHelpFlag(t *testing.T) {
 	old := os.Stdout
 	r, w, err := os.Pipe()
