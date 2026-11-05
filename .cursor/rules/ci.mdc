@@ -6,6 +6,6 @@ alwaysApply: false
 
 # CI
 
-- Workflows: test (race, shuffle, coverage gate 90% on internal/fs), lint (golangci-lint), security (govulncheck, CodeQL), docker build + Trivy (no push), release (GoReleaser snapshot on develop, tag on v*).
+- Workflows: test (race, shuffle, coverage gate 90% on internal/fs), lint (golangci-lint), security (govulncheck, CodeQL without SARIF upload), docker build + Trivy (no push), release (GoReleaser snapshot on develop, tag on v*).
 - Dependabot for gomod and actions; no auto-merge.
 - Main CI must pass without secret tokens (no Codecov upload required).

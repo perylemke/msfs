@@ -29,7 +29,6 @@ jobs:
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -43,5 +42,8 @@ jobs:
       - name: Autobuild
         uses: github/codeql-action/autobuild@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
 
+      # This private repo does not have GitHub code scanning enabled, so SARIF upload fails.
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@9418214df1f2c4b8128c770156c409013b07d6b9 # v3.39.3
+        with:
+          upload: false
