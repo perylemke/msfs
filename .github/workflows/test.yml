@@ -1,0 +1,52 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Go ${{ matrix.go }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go:
+          - "1.27"
+          - "stable"
+
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Set up Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Verify dependencies
+        run: |
+          go mod verify
+          go mod download
+
+      - name: Check go mod tidy
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod go.sum
+
+      - name: Build
+        run: go build ./...
+
+      - name: Run tests
+        run: go test -v -race -shuffle=on -coverprofile=coverage.out ./...
+
+      - name: Enforce coverage on internal/fs
+        if: matrix.go == '1.27'
+        run: |
+          go test -coverprofile=fs.out ./internal/fs/...
+          pct=$(go tool cover -func=fs.out | awk '/^total:/ {gsub(/%/,"",$3); print $3}')
+          echo "internal/fs coverage: ${pct}%"
+          awk -v p="$pct" 'BEGIN {exit (p+0 >= 90) ? 0 : 1}'

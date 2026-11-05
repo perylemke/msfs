@@ -1,0 +1,13 @@
+---
+description: Go testing conventions (TDD)
+globs: "**/*_test.go"
+alwaysApply: false
+---
+
+# Testing
+
+- Table-driven tests with a `name` field and `t.Run`.
+- Prefer `github.com/perylemke/ms-test/internal/fs_test` against the public `fs` API.
+- Use `t.Parallel()` when tests do not share mutable state.
+- Each slice: PDF happy path plus at least one error case per sentinel for that slice.
+- Write failing tests before implementation for the current slice.

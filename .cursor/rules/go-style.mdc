@@ -1,0 +1,13 @@
+---
+description: Go style and API conventions for in-memory filesystem
+globs: "**/*.go"
+alwaysApply: false
+---
+
+# Go Style
+
+- Keep packages small; business logic lives in `internal/fs`, thin entry in `cmd/msfs`.
+- Return sentinel errors with `errors.New` / `fmt.Errorf` and wrap with `%w` for context.
+- Do not panic in normal control flow; return errors.
+- Map PDF operations to clear method names: `Pwd`, `Cd`, `Mkdir`, `List`, `Rmdir`, `CreateFile`, `WriteFile`, `ReadFile`, `MoveFile`, `Find`.
+- Comment only non-obvious rules: directory merge on copy/move, hardlink inode sharing, list insertion order, collision suffix `~N`.
