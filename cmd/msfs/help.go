@@ -12,8 +12,8 @@ var commandHelp = map[string]string{
 Print the absolute path of the current working directory.`,
 	"cd": `usage: cd <path>
 Change the working directory. Supports relative paths, .., and absolute paths.`,
-	"mkdir": `usage: mkdir <name>
-Create a directory in the current working directory. Name must not contain '/'.`,
+	"mkdir": `usage: mkdir <name>...
+Create one or more directories in the current working directory. A name must not contain '/'.`,
 	"mkdir-p": `usage: mkdir-p <path>
 Create a directory and any missing parent directories. Path may be absolute or relative.`,
 	"mkdirall": `usage: mkdir-p <path>

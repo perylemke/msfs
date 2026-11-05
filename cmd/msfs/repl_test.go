@@ -41,7 +41,25 @@ func TestPrintCommandHelpMkdir(t *testing.T) {
 	require.NoError(t, err)
 	out := buf.String()
 	require.Contains(t, out, "usage: mkdir")
-	require.Contains(t, out, "Name must not contain")
+	require.Contains(t, out, "must not contain")
+}
+
+func TestMkdirMultipleDirectories(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, execLine(s, "mkdir pasta1 pasta2 pasta3"))
+	list, err := s.List()
+	require.NoError(t, err)
+	require.Equal(t, []string{"pasta1", "pasta2", "pasta3"}, list)
+}
+
+func TestMkdirMultipleContinuesAfterError(t *testing.T) {
+	s := fs.NewSession(fs.New())
+	require.NoError(t, s.Mkdir("pasta2"))
+	err := execLine(s, "mkdir pasta1 pasta2 pasta3")
+	require.ErrorIs(t, err, fs.ErrAlreadyExists)
+	list, listErr := s.List()
+	require.NoError(t, listErr)
+	require.Equal(t, []string{"pasta2", "pasta1", "pasta3"}, list)
 }
 
 func TestMainHelpFlag(t *testing.T) {

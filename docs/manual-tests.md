@@ -31,6 +31,15 @@ Use `<command> --help` (or `help <command>`) to see usage; help does not modify 
 
 Script: [scripts/pdf-happy-path.txt](scripts/pdf-happy-path.txt)
 
+## mkdir multiple names
+
+| Step | Command | Expected stdout |
+|------|---------|-----------------|
+| 1 | `mkdir pasta1 pasta2 pasta3` | (empty) |
+| 2 | `ls` | `pasta1 pasta2 pasta3` |
+
+If one name already exists, the others are still created and the command reports `already exists`.
+
 ## Core error cases
 
 | Scenario | Commands | Expected error |

@@ -76,9 +76,17 @@ func execLine(s *fs.Session, line string) error {
 		return s.Cd(fields[1])
 	case "mkdir":
 		if len(fields) < 2 {
-			return fmt.Errorf("usage: mkdir <name>")
+			return fmt.Errorf("usage: mkdir <name>...")
 		}
-		return s.Mkdir(fields[1])
+		var firstErr error
+		for _, name := range fields[1:] {
+			if err := s.Mkdir(name); err != nil {
+				if firstErr == nil {
+					firstErr = err
+				}
+			}
+		}
+		return firstErr
 	case "mkdir-p", "mkdirall":
 		if len(fields) < 2 {
 			return fmt.Errorf("usage: mkdir-p <path>")

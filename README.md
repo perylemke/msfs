@@ -12,6 +12,7 @@ In-memory filesystem take-home for Material Security, implemented in Go.
 | Target | Description |
 |--------|-------------|
 | `make test` | Tests with `-race` and `-shuffle=on` |
+| `make coverage` | Full project coverage report (`coverage.html`) |
 | `make test-fs` | Tests `internal/fs` + coverage gate (≥78%) |
 | `make build` | Binary in `bin/msfs` |
 | `make repl` | Interactive REPL (`go run`) |
@@ -26,6 +27,14 @@ go test -race -shuffle=on ./...
 ```
 
 Coverage gate (CI): `internal/fs` must stay at or above 78%.
+
+Local coverage for the whole repo:
+
+```bash
+make coverage
+```
+
+This writes `coverage.out`, prints per-function totals, and generates `coverage.html` for line-by-line view.
 
 ## Run the CLI
 
@@ -42,6 +51,8 @@ go run ./cmd/msfs run docs/scripts/pdf-happy-path.txt
 ```
 
 In the REPL, `<command> --help` (or `-h`) prints usage without changing the filesystem. `help` lists commands; `help mkdir` is the same as `mkdir --help`. The binary accepts `msfs --help` before starting the REPL.
+
+`mkdir` accepts multiple directory names in one command (like GNU mkdir), for example `mkdir pasta1 pasta2 pasta3`.
 
 ## Manual test scenarios
 
