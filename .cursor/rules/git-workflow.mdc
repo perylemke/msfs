@@ -1,0 +1,11 @@
+---
+description: Git branch and commit conventions
+alwaysApply: true
+---
+
+# Git Workflow
+
+- Work on branch `develop` branched from `main`.
+- One-line conventional commits in English: `feat`, `fix`, `test`, `docs`, `chore`, `ci`.
+- One commit per plan slice; run `go test -race -shuffle=on ./...` before each commit.
+- Do not push unless the user asks.
