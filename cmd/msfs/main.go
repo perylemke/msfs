@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/perylemke/ms-test/internal/fs"
 )
 
 func main() {
-	s := fs.NewSession(fs.New())
-	pwd, err := s.Pwd()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	if len(os.Args) >= 3 && os.Args[1] == "run" {
+		store := fs.New()
+		session := fs.NewSession(store)
+		os.Exit(runScript(session, os.Args[2]))
 	}
-	fmt.Println(pwd)
+	os.Exit(runREPL(nil))
 }
