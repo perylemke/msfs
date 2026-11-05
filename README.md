@@ -13,7 +13,7 @@ In-memory filesystem take-home for Material Security, implemented in Go.
 |--------|-------------|
 | `make test` | Tests with `-race` and `-shuffle=on` |
 | `make coverage` | Full project coverage report (`coverage.html`) |
-| `make test-fs` | Tests `internal/fs` + coverage gate (≥78%) |
+| `make test-fs` | Tests `internal/fs` + coverage gate (≥90%) |
 | `make build` | Binary in `bin/msfs` |
 | `make repl` | Interactive REPL (`go run`) |
 | `make script` | Run `docs/scripts/pdf-happy-path.txt` |
@@ -26,7 +26,7 @@ In-memory filesystem take-home for Material Security, implemented in Go.
 go test -race -shuffle=on ./...
 ```
 
-Coverage gate (CI): `internal/fs` must stay at or above 78%.
+Coverage gate (CI): `internal/fs` must stay at or above 90%.
 
 Local coverage for the whole repo:
 

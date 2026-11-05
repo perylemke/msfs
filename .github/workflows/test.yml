@@ -49,4 +49,4 @@ jobs:
           go test -coverprofile=fs.out ./internal/fs/...
           pct=$(go tool cover -func=fs.out | awk '/^total:/ {gsub(/%/,"",$3); print $3}')
           echo "internal/fs coverage: ${pct}%"
-          awk -v p="$pct" 'BEGIN {exit (p+0 >= 78) ? 0 : 1}'
+          awk -v p="$pct" 'BEGIN {exit (p+0 >= 90) ? 0 : 1}'
