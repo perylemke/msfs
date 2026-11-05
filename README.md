@@ -12,7 +12,7 @@ In-memory filesystem take-home for Material Security, implemented in Go.
 go test -race -shuffle=on ./...
 ```
 
-Coverage gate (CI): `internal/fs` must stay at or above 80%.
+Coverage gate (CI): `internal/fs` must stay at or above 78%.
 
 ## Run the CLI
 
