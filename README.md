@@ -1,6 +1,6 @@
-# ms-test
+# msfs
 
-In-memory filesystem take-home for Material Security, implemented in Go.
+In-memory filesystem implemented in Go.
 
 ## Requirements
 
